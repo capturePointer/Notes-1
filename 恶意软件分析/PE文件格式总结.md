@@ -1,5 +1,15 @@
 ## PE文件格式总结
 
+## 一、图解
+
+![Malware analysis_peshort](.\imgs\Malware analysis_peshort.png)
+
+![Malware analysis_pe](.\imgs\Malware analysis_pe.png)
+
+## 二、结构体详细信息
+
+### 1. IMAGE_DOS_HEADER
+
 ```c
 struct _IMAGE_DOS_HEADER{
     0X00 WORD e_magic;     // Magic DOS signature MZ(4Dh 5Ah):MZ标记:用于标记是否是可执行文件
@@ -24,6 +34,8 @@ struct _IMAGE_DOS_HEADER{
 };
 ```
 
+### 2. IMAGE_NT_HEADERS
+
 ```c
 typedef struct _IMAGE_NT_HEADERS {
     DWORD Signature;        // PE Signature: 50450000 ("PE"00)
@@ -31,6 +43,8 @@ typedef struct _IMAGE_NT_HEADERS {
     IMAGE_OPTIONAL_HEADER32 OptionalHeader;
 } IMAGE_NT_HEADER32, *PIMAGE_NT_HEADER32;
 ```
+
+### 3. IMAGE_FILE_HEADER
 
 ```c
 struct _IMAGE_FILE_HEADER{
@@ -43,6 +57,8 @@ struct _IMAGE_FILE_HEADER{
     0x12 WORD Characteristics;          // 如果 & 0x2000 后不为零，说明是DLL文件
 };
 ```
+
+### 4. IMAGE_OPTIONAL_HEADER
 
 ```c
 struct _IMAGE_OPTIONAL_HEADER{
@@ -80,12 +96,16 @@ struct _IMAGE_OPTIONAL_HEADER{
 };
 ```
 
+### 5. IMAGE_DATA_DIRECTORY
+
 ```c
 typedef struct _IMAGE_DATA_DIRECTORY {
     0x00 DWORD   VirtualAddress;
     0x04 DWORD   Size;
 } IMAGE_DATA_DIRECTORY, *PIMAGE_DATA_DIRECTORY;
 ```
+
+### 6. IMAGE_EXPORT_DIRECTORY
 
 ```c
 typedef struct _IMAGE_EXPORT_DIRECTORY {
@@ -102,6 +122,8 @@ typedef struct _IMAGE_EXPORT_DIRECTORY {
     0x24 DWORD   AddressOfNameOrdinals;  // 指向输出函数序号的RVA
 } IMAGE_EXPORT_DIRECTORY, *PIMAGE_EXPORT_DIRECTORY;
 ```
+
+### 7. IMAGE_SECTION_HEADER
 
 ```c
 typedef struct _IMAGE_SECTION_HEADER {
