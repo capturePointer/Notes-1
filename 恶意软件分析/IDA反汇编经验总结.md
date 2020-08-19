@@ -120,7 +120,7 @@
 
    可以选择`View->Graphs->Flow Chart`，显示地更清晰。
 
-   ![Malware analysis_for loop](.\imgs\Malware analysis_for loop.png)
+   ![for-loop](./imgs/for-loop.png)
 
 2. 函数调用规范
 

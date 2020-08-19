@@ -2,9 +2,9 @@
 
 ## 一、图解
 
-![Malware analysis_peshort](.\imgs\Malware analysis_peshort.png)
+![pe-short](./imgs/pe-short.png)
 
-![Malware analysis_pe](.\imgs\Malware analysis_pe.png)
+![pe](./imgs/pe.png)
 
 ## 二、结构体详细信息
 
