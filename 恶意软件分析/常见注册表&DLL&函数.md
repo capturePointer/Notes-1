@@ -1,6 +1,11 @@
-# 常见DLL&函数
+# 常见注册表&DLL&函数
 
-## 一、常见DLL
+## 一、常见注册表
+
+- `HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run`：开机自启
+- `HKLM\SYSTEM\CurrentControlSet\Services`：服务
+
+## 二、常见DLL
 
 | DLL                     | 介绍                                                         |
 | ----------------------- | ------------------------------------------------------------ |
@@ -28,6 +33,12 @@ SOCKET WSAAPI socket(
 
 ## 三、文件相关函数
 
-1. FindFirstFile、FindNextFile说明程序在文件系统中进行遍历搜索
-2. LoadResource, FindResource, SizeOfResource：需要查看程序的`rsrc`段，可能隐藏了其他信息
-3. CreateFile, WriteFile, WinExec：创建了文件并执行
+1. `FindFirstFile`、`FindNextFile`说明程序在文件系统中进行遍历搜索
+2. `LoadResource`, `FindResource`, `SizeOfResource`：需要查看程序的`rsrc`段，可能隐藏了其他信息
+3. `CreateFile`, `WriteFile`, `WinExec`：创建了文件并执行
+4. 
+
+## 四、系统相关函数
+
+1. `CreateToolhelp32Snapshot`：生成进程列表
+2. `OpenService`, `DeleteService`, `OpenSCManager`, `CreateService`：服务相关功能
