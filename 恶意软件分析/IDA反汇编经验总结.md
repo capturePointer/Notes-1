@@ -104,14 +104,14 @@
 
    `repne scasb`还可用于计算字符串长度，等价于`strlen`。
 
-   ```assembly
-   mov		edi, offset buf		; "hello"
-   xor 	eax, eax			; 字符串结尾
-   or		ecx, 0FFFFFFFFh		; 设置ECX为-1
-   repne scasb					; 搜索字符串结尾，ECX会不断减1
-   not 	ecx					; ECX取反
-   dec 	ecx					; ECX减1，为字符串长度
-   ```
+```assembly
+mov		edi, offset buf		; "hello"
+xor 	eax, eax			; 字符串结尾
+or		ecx, 0FFFFFFFFh		; 设置ECX为-1
+repne scasb					; 搜索字符串结尾，ECX会不断减1
+not 	ecx					; ECX取反
+dec 	ecx					; ECX减1，为字符串长度
+```
 
 
 ## 三、代码分析
@@ -141,8 +141,12 @@
       004010D2        mov     [ebp+var_4], eax
    ```
 
+4. 
+
 ## 四、经验与教训
 
 1. 在之前的基础静态、动态分析过程中，已经对程序功能有了猜测，在此基础上进行代码分析
 2. 面对一个函数，要先查看它的参数，交叉引用，流程图，返回值，建立初步认知
 3. 及时对已知功能（哪怕是猜测）的函数及变量进行重命名，添加注释
+4. 如果一个函数特别大，可以先查看所有的`call`指令
+5. 根据实验7-3，如果有某个变量找不到数据来源，可以查看函数开头的变量表，是不是由于IDA的自动分析，数据传入了与该变量相邻的变量，而我们没有发现
