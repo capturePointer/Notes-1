@@ -5,6 +5,7 @@
 - `HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run`：开机自启
 - `HKLM\SYSTEM\CurrentControlSet\Services`：服务
 - `HKLM\SOFTWARE\Classes\CLSID\`, `HKCU\SOFTWARE\Classes\CLSID`：COM类的CLSID
+- `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AeDebug`：检查调试器
 
 ## 二、常见DLL
 
@@ -39,7 +40,7 @@ BOOL CreateProcessA(
   LPSECURITY_ATTRIBUTES lpProcessAttributes,
   LPSECURITY_ATTRIBUTES lpThreadAttributes,
   BOOL                  bInheritHandles,
-  DWORD                 dwCreationFlags,
+  DWORD                 dwCreationFlags,	// CREATE_SUSPENDED: 0x4
   LPVOID                lpEnvironment,
   LPCSTR                lpCurrentDirectory,
   LPSTARTUPINFOA        lpStartupInfo,		// 查看【常用结构体】
@@ -101,6 +102,34 @@ HRESULT CoCreateInstance(
 
 确定`IID`代表的接口名称后，可以在IDA的`Structures`子窗口中插入结构体 *InterfaceName*Vtbl，确定代码调用的具体是哪个函数；或者直接在网上搜索接口的头文件 
 
+6. SetWindowsHookEx
+
+```c
+HHOOK SetWindowsHookExA(
+  int       idHook,		// WH_CBT: 5; WH_KEYBOARD: 2; WH_KEYBOARD_LL: 13
+  HOOKPROC  lpfn,		// hook后执行的函数
+  HINSTANCE hmod,		// 包含了lpfn的DLL句柄，若dwThreadId指向的是当前进程线程，则为NULL
+  DWORD     dwThreadId	// 若为0，则关联所有线程
+);
+```
+
+7. KeInitializeApc
+
+```c
+VOID KeInitializeApc(
+  IN  PRKAPC Apc,			// 要返回的初始化KAPC结构
+  IN  PRKTHREAD Thread,		// 执行该APC的线程
+  IN  KAPC_ENVIRONMENT Environment,
+  IN  PKKERNEL_ROUTINE KernelRoutine,
+  IN  PKRUNDOWN_ROUTINE RundownRoutine OPTIONAL,
+  IN  PKNORMAL_ROUTINE NormalRoutine OPTIONAL,	// 非0
+  IN  KPROCESSOR_MODE ApcMode OPTIONAL,			// KERNELMODE: 0 USERMODE:1
+  IN  PVOID NormalContext OPTIONAL
+);
+```
+
+
+
 ## 三、常见函数组合
 
 1. `FindFirstFile`、`FindNextFile`说明程序在文件系统中进行遍历搜索
@@ -114,3 +143,7 @@ HRESULT CoCreateInstance(
 9. `DllCanUnloadNow`, `DllGetClassObject`, `DllInstall`, `DllRegisterServer`, `DllUnregisterServer`：输出函数中有这些，说明实现了COM服务器功能
 10. `CoCreateInstance`, `OleInitialize`：使用了COM功能
 11. `OpenProcessToken`、`LookupPrivilegeValueA`、`AdjustTokenPrivileges`：权限提升，看到这些函数之后进行标记，不需要仔细分析
+12. `VirtualAllocEx`, `WriteProcessMemory`：进程注入
+13. `QueueUserAPC`, `KeInitializeApc`, `KeInsertQueueApc`：APC注入
+14. `IsDebuggerPresent`, `CheckRemoteDebuggerPresent`, `NtQueryInformationProcess`,  `OutputDebugString`：反调试技术
+15. `QueryPerformanceCounter`、`GetTickCount`：可能有反调试技术

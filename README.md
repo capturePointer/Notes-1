@@ -4,7 +4,7 @@
 
 ### 1. 恶意软件分析（草稿）
 
-《Practical Malware Analysis》的笔记整理，正在完成中，目前还是草稿。
+《Practical Malware Analysis》的笔记整理，大部分已经完成，目前还是草稿。
 
 **Malware analysis学习笔记**：这是阅读和实验过程中随手记下来的一些要点，整理过程会以书中的标记和该文件为基础。
 
