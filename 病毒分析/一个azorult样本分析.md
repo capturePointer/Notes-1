@@ -10,7 +10,7 @@
 
 ### 1.1 PEiD结果
 
-![image-20200918111338217](.\img\unom-peid.png)
+![image-20200918111338217](./img/unom-peid.png)
 
 所以程序使用Delphi开发的，里面可能存在base64编码。
 
@@ -65,21 +65,21 @@ wsock32.dll		wininet.dll		# 网络操作
 
 下面是有关注册表的一些操作，样本查询了大量的注册表值，这里应该是在收集信息：
 
-![image-20200918193231447](.\img\unom-huorong1.png)
+![image-20200918193231447](./img/unom-huorong1.png)
 
 还可以看到`svchost.exe`进程也打开了`unommbZo`进程：
 
-![image-20200918193723288](.\img\unom-huorong2.png)
+![image-20200918193723288](./img/unom-huorong2.png)
 
 以及联网操作：
 
-![image-20200918194258739](.\img\unom-huorong3.png)
+![image-20200918194258739](./img/unom-huorong3.png)
 
 可以看到样本和`kirill0v.beget.tech/index.php`建立 了连接，接下来看一下联网操作发送了什么内容。
 
 ### 2.2 Wireshark抓包
 
-![image-20200918103038801](.\img\unom-wireshark.png)
+![image-20200918103038801](./img/unom-wireshark.png)
 
 上图是抓包结果，完整的请求如下：
 
@@ -97,7 +97,7 @@ Cache-Control: no-cache
 
 遗憾的是，连接已经关闭了：
 
-![image-20200918194436627](.\img\unom-wireshark2.png)
+![image-20200918194436627](./img/unom-wireshark2.png)
 
 所以我最终是从ANY.RUN上把C2服务器返回的内容下载了下来，你可以从附件获取该内容`index.php.zip`，解压密码为`infected`。
 
@@ -109,27 +109,27 @@ Cache-Control: no-cache
 
 将样本导入`IDA`后，发现入口点的`start`函数中，在`InitExe`和`Halt0`之间，只调用了一个函数`sub_419108`，这应该就是主函数了，重命名为`main_function`，然后双击进入该函数。
 
-![image-20200918104904807](.\img\unom-ida1.png)
+![image-20200918104904807](./img/unom-ida1.png)
 
 下图显示了`main_function`的前半部分，基本覆盖了从样本开始执行到接收从C2服务器发过来的响应这一部分内容，本文就分析这一段内容。
 
-![image-20200918201306881](.\img\unom-ida2.png)
+![image-20200918201306881](./img/unom-ida2.png)
 
 ### 3.2 sub_407D24
 
 第一个样本内函数调用已经进行了重命名，为`load_kernel32`。直接看下一个函数`sub_407D24`，该函数内调用了三次`sub_407B78`，在OD中分析该函数：
 
-![image-20200918203307295](.\img\unom-od1.png)
+![image-20200918203307295](./img/unom-od1.png)
 
 之后，该函数还调用了`CheckTokenMembership`和`FreeSid`，它在检查用户权限。
 
 除了调用三次`sub_407B78`外，该函数还调用了一次`sub_407C58`，这两个函数的结构类似，只不过后者检查的是系统权限：
 
-![image-20200918204040432](.\img\unom-od2.png)
+![image-20200918204040432](./img/unom-od2.png)
 
 所以得到了函数`sub_407D24`的完成流程为：
 
-![image-20200918204240225](.\img\unom-ida4.png)
+![image-20200918204240225](./img/unom-ida4.png)
 
 ### 3.3 sub_406C4C
 
