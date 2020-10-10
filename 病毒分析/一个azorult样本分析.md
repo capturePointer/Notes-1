@@ -127,9 +127,60 @@ Cache-Control: no-cache
 
 ![image-20200918204040432](./img/unom-od2.png)
 
-所以得到了函数`sub_407D24`的完成流程为：
+所以得到了函数`sub_407D24`的完整流程为：
 
 ![image-20200918204240225](./img/unom-ida4.png)
 
 ### 3.3 sub_406C4C
 
+看一下这个函数的主体：
+
+![image-20201011032950866](./img/unom-ida5.png)
+
+变量`v14`、`v15`、`v16`、`v17`分别通过四个不同的函数获得，然后传到了变量`v18`、`v19`、`v20`、`v21`中，最后通过函数`sub_406258`进行了一些处理，之后是一些字符串处理函数。
+
+前四个函数中，`sub_406E70`和`sub_406BB4`中有类似的函数调用：
+
+```c
+// sub_406E70
+sub_406DAC(0x80000002, (int)L"SOFTWARE\\Microsoft\\Cryptography", (int)L"MachineGuid", v1);
+// sub_406BB4
+return sub_407500(
+           (char *)0x80000002,
+           (int)L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
+           (int)L"ProductName",
+           0,
+           a1);
+```
+
+我猜测这里应该是在做注册表的查询，在OD中查看，可以发现`sub_406DAC`调用了`RegOpenKeyExW`和`RegQueryValueExW`函数，返回值是一个unicode字符串`934c0b13-8e19-4e5b-b313-f8a8f40cc695`，就是该注册表的值：
+
+![image-20200918204040433](./img/unom-od3.png)
+
+这次先看一下`SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\ProductName`的值：
+
+![unom-regedit](./img/unom-regedit.png)
+
+直接在OD中查看`sub_406BB4`的返回值：
+
+![unom-od4](./img/unom-od4.png)
+
+剩下的两个函数主要是调用了系统的API：`GetUserNameW`和`GetComputerNameW`，从OD中也可以验证这一点：
+
+![image-20201011042359288](./img/unom-od5.png)
+
+然后看重复调用了五次的函数`sub_406258`：
+
+![image-20201011042719492](./img/unom-sub406258.png)
+
+可以看到它主要只调用了一个函数`sub_4061E0`，而这个函数的主体做了一个编码：
+
+![image-20201011042913103](./img/unom-ida6.png)
+
+所以函数的后半部分进行了一些编码和组合：
+
+![image-20201011044522698](./img/unom-od6.png)
+
+综上，函数`sub_406c4c`完成了以下功能：
+
+![image-20201011045034827](./img/unom-ida7.png)
